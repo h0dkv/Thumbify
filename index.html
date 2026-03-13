@@ -12,6 +12,51 @@
 
 <body class="bg-black text-white min-h-screen">
 
+    <!-- Auth Modal -->
+    <div id="authModal"
+        class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="glass-box w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-300">
+            <button onclick="toggleAuthModal(false)"
+                class="absolute top-6 right-6 text-zinc-500 hover:text-white transition">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div id="loginForm">
+                <h2 class="text-3xl font-black italic mb-2 tracking-tighter">WELCOME BACK</h2>
+                <p class="text-zinc-500 text-sm mb-8">Enter your credentials to access the neural engine.</p>
+                <form onsubmit="handleAuth(event, 'login')" class="space-y-6">
+                    <div><label class="input-label">Email Address</label><input type="email" required
+                            class="thumb-input" placeholder="name@domain.com"></div>
+                    <div><label class="input-label">Password</label><input type="password" required class="thumb-input"
+                            placeholder="••••••••"></div>
+                    <button type="submit" class="gen-btn w-full">SIGN IN</button>
+                </form>
+                <p class="mt-8 text-center text-zinc-500 text-xs font-bold uppercase tracking-widest">
+                    New to the lab? <a href="javascript:void(0)" onclick="switchAuthMode('register')"
+                        class="text-purple-500 hover:text-purple-400">Create Account</a>
+                </p>
+            </div>
+
+            <div id="registerForm" class="hidden">
+                <h2 class="text-3xl font-black italic mb-2 tracking-tighter">JOIN THE LAB</h2>
+                <p class="text-zinc-500 text-sm mb-8">Start generating high-CTR assets in seconds.</p>
+                <form onsubmit="handleAuth(event, 'register')" class="space-y-6">
+                    <div><label class="input-label">Full Name</label><input type="text" required class="thumb-input"
+                            placeholder="Alex Rivera"></div>
+                    <div><label class="input-label">Email Address</label><input type="email" required
+                            class="thumb-input" placeholder="name@domain.com"></div>
+                    <div><label class="input-label">Password</label><input type="password" required class="thumb-input"
+                            placeholder="••••••••"></div>
+                    <button type="submit" class="gen-btn w-full">INITIALIZE ACCOUNT</button>
+                </form>
+                <p class="mt-8 text-center text-zinc-500 text-xs font-bold uppercase tracking-widest">
+                    Already registered? <a href="javascript:void(0)" onclick="switchAuthMode('login')"
+                        class="text-purple-500 hover:text-purple-400">Sign In</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
     <nav class="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-xl border-b border-zinc-900">
         <div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
             <div class="text-2xl font-black tracking-tighter flex items-center cursor-pointer"
@@ -28,10 +73,16 @@
                     class="nav-link hover:text-white transition">Showcase</a>
             </div>
 
-            <button onclick="showPage('home'); scrollToGenerator()"
-                class="hidden md:block text-xs font-black uppercase tracking-widest border border-zinc-800 px-6 py-2 rounded-full hover:bg-white hover:text-black transition">
-                Launch App
-            </button>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleAuthModal(true, 'login')"
+                    class="text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-white transition">
+                    Login
+                </button>
+                <button onclick="toggleAuthModal(true, 'register')"
+                    class="text-xs font-black uppercase tracking-widest bg-white text-black px-6 py-2 rounded-full hover:bg-purple-500 hover:text-white transition">
+                    Register
+                </button>
+            </div>
         </div>
     </nav>
 

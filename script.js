@@ -1,4 +1,39 @@
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+// Firebase Configuration & Initialization
+const firebaseConfig = JSON.parse(__firebase_config);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'thumbify-ai';
+
+let currentUser = null;
 let activeStyle = 'Gaming';
+
+// 1. AUTHENTICATION SETUP
+const initAuth = async () => {
+    try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+            await signInAnonymously(auth);
+        }
+    } catch (error) {
+        console.error("Auth initialization failed", error);
+    }
+};
+
+onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+    if (user) {
+        console.log("Logged in as:", user.uid);
+        // Sync history if we had a dashboard page
+    }
+});
+
+initAuth();
 
 // PAGE NAVIGATION SYSTEM
 function showPage(pageId) {
@@ -15,18 +50,55 @@ function showPage(pageId) {
         setTimeout(() => selectedPage.classList.add('active'), 10);
     }
 
-    // Update Nav Links
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('text-purple-500');
-    });
-
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// AUTH MODAL LOGIC
+function toggleAuthModal(show, mode = 'login') {
+    const modal = document.getElementById('authModal');
+    if (show) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        switchAuthMode(mode);
+    } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function switchAuthMode(mode) {
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+
+    if (mode === 'login') {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+    } else {
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+    }
+}
+
+async function handleAuth(event, type) {
+    event.preventDefault();
+    const btn = event.target.querySelector('button');
+    const originalText = btn.innerText;
+
+    btn.disabled = true;
+    btn.innerText = type === 'login' ? "AUTHENTICATING..." : "INITIALIZING...";
+
+    // In this environment, we use the pre-configured anonymous or token-based auth
+    // For a real production app, you would use signInWithEmailAndPassword here
+    setTimeout(() => {
+        toggleAuthModal(false);
+        btn.disabled = false;
+        btn.innerText = originalText;
+    }, 1000);
+}
+
 function scrollToGenerator() {
-    const generator = document.getElementById('generator');
-    generator.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('generator').scrollIntoView({ behavior: 'smooth' });
 }
 
 function selectStyle(btn, style) {
@@ -35,16 +107,26 @@ function selectStyle(btn, style) {
     activeStyle = style;
 }
 
+// 2. DATABASE INTEGRATION (Firestore)
+async function saveGenerationToCloud(title, style, imageUrls) {
+    if (!currentUser) return;
+
+    try {
+        await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'generations'), {
+            title: title,
+            style: style,
+            images: imageUrls,
+            createdAt: serverTimestamp()
+        });
+    } catch (e) {
+        console.error("Error saving to database: ", e);
+    }
+}
+
 function generate() {
     const title = document.getElementById('videoTitle').value;
     if (!title) {
-        // Custom message box instead of alert for tech feel
-        const container = document.getElementById('outputContainer');
-        container.innerHTML = `
-            <div class="bg-red-500/10 border border-red-500/50 p-4 rounded-xl text-red-500 text-xs font-bold uppercase tracking-widest text-center">
-                System Error: Input Title String Required.
-            </div>
-        `;
+        alert("Please enter a video title first!");
         return;
     }
 
@@ -54,23 +136,31 @@ function generate() {
     // Show Loading
     loading.classList.remove('hidden');
     btn.disabled = true;
-    btn.innerText = "PROCESSING...";
+    btn.innerText = "GENERATING...";
 
-    setTimeout(() => {
+    setTimeout(async () => {
         loading.classList.add('hidden');
         btn.disabled = false;
         btn.innerText = "GENERATE THUMBNAILS";
-        renderResults(title);
+
+        const results = renderResults(title);
+
+        // Save to Database
+        if (currentUser) {
+            await saveGenerationToCloud(title, activeStyle, results);
+        }
     }, 2500);
 }
 
 function renderResults(title) {
     const container = document.getElementById('outputContainer');
-    container.innerHTML = ''; // Clear empty state
+    container.innerHTML = '';
+    const imageUrls = [];
 
     for (let i = 0; i < 2; i++) {
         const randomId = Math.floor(Math.random() * 1000);
         const imgUrl = `https://picsum.photos/seed/${randomId}/1280/720`;
+        imageUrls.push(imgUrl);
 
         const card = document.createElement('div');
         card.className = 'thumbnail-result group';
@@ -94,4 +184,5 @@ function renderResults(title) {
         `;
         container.appendChild(card);
     }
+    return imageUrls;
 }
