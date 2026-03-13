@@ -3,11 +3,14 @@ import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged }
 import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
 // Firebase Configuration & Initialization
-const firebaseConfig = JSON.parse(__firebase_config);
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'thumbify-ai';
+const firebaseConfig = {
+    apiKey: "AIzaSyDpbJSPG8GBsQ43YkN69ujPLJxQDZ2cDOk",
+    authDomain: "thumbify-cd4f2.firebaseapp.com",
+    projectId: "thumbify-cd4f2",
+    storageBucket: "thumbify-cd4f2.firebasestorage.app",
+    messagingSenderId: "1005528653525",
+    appId: "1:1005528653525:web:6de98ddfb30893f89c0c5c"
+};
 
 let currentUser = null;
 let activeStyle = 'Gaming';
@@ -82,19 +85,23 @@ function switchAuthMode(mode) {
 
 async function handleAuth(event, type) {
     event.preventDefault();
-    const btn = event.target.querySelector('button');
-    const originalText = btn.innerText;
 
-    btn.disabled = true;
-    btn.innerText = type === 'login' ? "AUTHENTICATING..." : "INITIALIZING...";
+    const email = event.target.querySelector('input[type="email"]').value;
+    const password = event.target.querySelector('input[type="password"]').value;
 
-    // In this environment, we use the pre-configured anonymous or token-based auth
-    // For a real production app, you would use signInWithEmailAndPassword here
-    setTimeout(() => {
+    try {
+
+        if (type === "login") {
+            await signInWithEmailAndPassword(auth, email, password);
+        } else {
+            await createUserWithEmailAndPassword(auth, email, password);
+        }
+
         toggleAuthModal(false);
-        btn.disabled = false;
-        btn.innerText = originalText;
-    }, 1000);
+
+    } catch (err) {
+        alert(err.message);
+    }
 }
 
 function scrollToGenerator() {
@@ -186,3 +193,8 @@ function renderResults(title) {
     }
     return imageUrls;
 }
+
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
