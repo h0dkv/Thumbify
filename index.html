@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thumbify | AI YouTube Thumbnail Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-black text-white min-h-screen">
+
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-xl border-b border-zinc-900">
+        <div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+            <div class="text-2xl font-black tracking-tighter flex items-center cursor-pointer"
+                onclick="showPage('home')">
+                <span class="logo-accent px-2 py-1 rounded mr-1 text-white">T</span>HUMBIFY
+            </div>
+
+            <div class="hidden md:flex gap-8 text-sm font-bold text-zinc-400">
+                <a href="javascript:void(0)" onclick="showPage('features')"
+                    class="nav-link hover:text-white transition">Features</a>
+                <a href="javascript:void(0)" onclick="showPage('pricing')"
+                    class="nav-link hover:text-white transition">Pricing</a>
+                <a href="javascript:void(0)" onclick="showPage('showcase')"
+                    class="nav-link hover:text-white transition">Showcase</a>
+            </div>
+
+            <button onclick="showPage('home'); scrollToGenerator()"
+                class="hidden md:block text-xs font-black uppercase tracking-widest border border-zinc-800 px-6 py-2 rounded-full hover:bg-white hover:text-black transition">
+                Launch App
+            </button>
+        </div>
+    </nav>
+
+    <!-- PAGE: HOME -->
+    <main id="page-home" class="page-content active pt-20">
+        <header class="flex flex-col items-center justify-center text-center pt-24 pb-32 px-4 relative overflow-hidden">
+            <div class="red-glow"></div>
+            <div
+                class="inline-block bg-zinc-900 border border-zinc-800 text-zinc-300 text-[10px] font-black px-4 py-2 rounded-full mb-8 tracking-widest uppercase">
+                <span class="text-purple-500">●</span> v2.0 AI Model Now Live
+            </div>
+            <h1 class="text-7xl md:text-9xl font-black mb-6 italic leading-none">THUMBIFY <br><span
+                    class="opacity-90">AI</span></h1>
+            <p class="text-zinc-400 text-xl max-w-xl mb-12 leading-relaxed">Stop guessing. Turn your video ideas into
+                <span class="text-white font-bold">high-CTR viral assets</span> using neural design patterns.</p>
+            <button onclick="scrollToGenerator()" class="main-cta">Get Started Free <i
+                    class="fas fa-bolt ml-2"></i></button>
+        </header>
+
+        <section id="generator" class="max-w-7xl mx-auto px-6 py-24 border-t border-zinc-900">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                <div class="lg:col-span-5 space-y-8">
+                    <div class="glass-box p-8 rounded-3xl border border-zinc-800">
+                        <h2 class="text-xl font-bold mb-8 flex items-center gap-3"><i
+                                class="fas fa-wand-magic-sparkles text-purple-500"></i> Studio Controls</h2>
+                        <div class="space-y-6">
+                            <div><label class="input-label">Video Title</label><input id="videoTitle" type="text"
+                                    class="thumb-input" placeholder="How I Built an AI Startup in 24h"></div>
+                            <div><label class="input-label">Topic / Context</label><input id="videoTopic" type="text"
+                                    class="thumb-input" placeholder="Tech, neon, futuristic, dramatic"></div>
+                            <div>
+                                <label class="input-label">Thumbnail Style</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button class="style-opt active"
+                                        onclick="selectStyle(this, 'Gaming')">Gaming</button>
+                                    <button class="style-opt" onclick="selectStyle(this, 'MrBeast')">MrBeast</button>
+                                    <button class="style-opt" onclick="selectStyle(this, 'Vlog')">Vlog</button>
+                                    <button class="style-opt" onclick="selectStyle(this, 'Minimal')">Minimal</button>
+                                </div>
+                            </div>
+                            <button id="genBtn" onclick="generate()" class="gen-btn">GENERATE THUMBNAILS</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-7 relative min-h-[500px]">
+                    <div id="loading"
+                        class="hidden absolute inset-0 flex flex-col items-center justify-center bg-black/90 z-20 rounded-3xl backdrop-blur-sm">
+                        <div class="loader mb-6"></div>
+                        <p class="text-zinc-400 font-bold tracking-widest uppercase text-xs">Processing Neural
+                            Patterns...</p>
+                    </div>
+                    <div id="outputContainer" class="flex flex-col gap-8 h-full">
+                        <div class="empty-preview h-full">
+                            <div class="text-center">
+                                <i class="fas fa-layer-group text-4xl text-zinc-800 mb-4 block"></i>
+                                <p class="text-zinc-600 font-bold uppercase tracking-widest text-sm">Preview Generation
+                                    Area</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PAGE: FEATURES -->
+    <section id="page-features" class="page-content pt-32 pb-20 max-w-7xl mx-auto px-6 hidden">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-black mb-4">ENGINEERED FOR <span class="text-purple-500 italic">VIRALITY</span>
+            </h2>
+            <p class="text-zinc-500">Built on the data of 100,000+ top-performing YouTube thumbnails.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="glass-box p-10">
+                <div class="text-purple-500 text-3xl mb-6"><i class="fas fa-brain"></i></div>
+                <h3 class="text-xl font-bold mb-4 uppercase tracking-tighter">Neural Layouts</h3>
+                <p class="text-zinc-400 text-sm leading-relaxed">Our AI understands human eye tracking (Heatmaps) and
+                    automatically places elements to maximize attention.</p>
+            </div>
+            <div class="glass-box p-10">
+                <div class="text-purple-500 text-3xl mb-6"><i class="fas fa-palette"></i></div>
+                <h3 class="text-xl font-bold mb-4 uppercase tracking-tighter">Color Psychology</h3>
+                <p class="text-zinc-400 text-sm leading-relaxed">Automatic saturation and contrast optimization based on
+                    current YouTube algorithm color preferences.</p>
+            </div>
+            <div class="glass-box p-10">
+                <div class="text-purple-500 text-3xl mb-6"><i class="fas fa-bolt"></i></div>
+                <h3 class="text-xl font-bold mb-4 uppercase tracking-tighter">1-Click 4K Export</h3>
+                <p class="text-zinc-400 text-sm leading-relaxed">Cloud rendering ensures your thumbnails are
+                    pixel-perfect and ready for any screen size instantly.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE: PRICING -->
+    <section id="page-pricing" class="page-content pt-32 pb-20 max-w-5xl mx-auto px-6 hidden">
+        <div class="text-center mb-16">
+            <h2 class="text-5xl font-black mb-4">CHOOSE YOUR <span class="text-purple-500 italic">POWER</span></h2>
+            <p class="text-zinc-500">Scale your channel with AI-driven design.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="glass-box p-12 border-zinc-800">
+                <h3 class="text-2xl font-black mb-2">STARTER</h3>
+                <div class="text-4xl font-black mb-6">$0 <span class="text-sm text-zinc-500 font-normal">/mo</span>
+                </div>
+                <ul class="space-y-4 mb-10 text-zinc-400 text-sm">
+                    <li><i class="fas fa-check text-purple-500 mr-2"></i> 5 Generations per month</li>
+                    <li><i class="fas fa-check text-purple-500 mr-2"></i> Standard Resolution</li>
+                    <li><i class="fas fa-check text-purple-500 mr-2"></i> Basic Neural Models</li>
+                </ul>
+                <button
+                    class="w-full py-4 rounded-xl border border-zinc-800 font-bold hover:bg-white hover:text-black transition uppercase tracking-widest text-xs">Get
+                    Started</button>
+            </div>
+            <div class="glass-box p-12 border-purple-500 shadow-[0_0_50px_rgba(168,85,247,0.2)]">
+                <div class="badge-style absolute top-6 right-6">MOST POPULAR</div>
+                <h3 class="text-2xl font-black mb-2">CREATOR PRO</h3>
+                <div class="text-4xl font-black mb-6">$19 <span class="text-sm text-zinc-500 font-normal">/mo</span>
+                </div>
+                <ul class="space-y-4 mb-10 text-zinc-400 text-sm">
+                    <li><i class="fas fa-check text-purple-500 mr-2"></i> Unlimited Generations</li>
+                    <li><i class="fas fa-check text-purple-500 mr-2"></i> 4K Ultra-HD Export</li>
+                    <li><i class="fas fa-check text-purple-500 mr-2"></i> Priority Neural Processing</li>
+                    <li><i class="fas fa-check text-purple-500 mr-2"></i> Face Swap AI Integration</li>
+                </ul>
+                <button class="gen-btn">Go Pro Now</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE: SHOWCASE -->
+    <section id="page-showcase" class="page-content pt-32 pb-20 max-w-7xl mx-auto px-6 hidden">
+        <div class="text-center mb-16">
+            <h2 class="text-5xl font-black mb-4 italic">COMMUNITY <span class="text-purple-500">WINS</span></h2>
+            <p class="text-zinc-500">Thumbnails that actually boosted CTR by 200%+.</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <!-- Mock items -->
+            <div class="thumbnail-result group h-64">
+                <img src="https://picsum.photos/seed/123/800/450" class="w-full h-full object-cover opacity-60">
+                <div class="absolute inset-0 flex items-center justify-center p-4">
+                    <span class="text-white font-black italic text-center text-sm uppercase">100 Days in
+                        Minecraft</span>
+                </div>
+            </div>
+            <div class="thumbnail-result group h-64">
+                <img src="https://picsum.photos/seed/456/800/450" class="w-full h-full object-cover opacity-60">
+                <div class="absolute inset-0 flex items-center justify-center p-4">
+                    <span class="text-white font-black italic text-center text-sm uppercase">The Future of AI</span>
+                </div>
+            </div>
+            <div class="thumbnail-result group h-64">
+                <img src="https://picsum.photos/seed/789/800/450" class="w-full h-full object-cover opacity-60">
+                <div class="absolute inset-0 flex items-center justify-center p-4">
+                    <span class="text-white font-black italic text-center text-sm uppercase">I Quit My Job</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-20 text-center border-t border-zinc-900 mt-20">
+        <p class="text-zinc-600 text-sm font-bold tracking-widest uppercase">&copy; 2026 Thumbify AI Labs</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
